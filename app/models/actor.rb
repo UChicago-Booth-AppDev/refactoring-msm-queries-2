@@ -12,8 +12,20 @@
 #
 class Actor < ApplicationRecord
   
-  has_many :characters
+  # ACTOR TO CHARACHTER
   
+  # Once actor can play many characters, but a character can be played by only one actor, so this is a 1-to-many relationship
+
+  # Therefore, we have to use the has_many() method
+
+  # has_many(:characters, {:foreign_key => "actor_id", :class_name => "Character"})
+
+  # Since the names are all the same, we can use the abbreviated version:
+  
+  has_many(:characters)
+  
+  # Remember that both codes are the same as:
+
   #def characters
    # key = self.id
 
@@ -21,24 +33,40 @@ class Actor < ApplicationRecord
 
     #return the_many
   #end
-
   
-  # filmography is many to many, so has_many won't work in the traditional way.
+
+  # ACTOR TO MOVIES (AND CHARACTERS)
+
+  # One actor can be in multiple movies, and a movie has severall actors.
+
+  # Therefore, filmography is a special case, because it is a many to many, so has_many() won't work in the traditional way.
+
+  # We first have to define the characters played by the actor
 
   has_many :characters
+
+  # or (depending on the names)
+
+  # has_many(:characters, { {:foreign_key => "actor_id", :class_name => "Actor"}})
+
+  # and then we define the movie
+
   has_many(:filmography, { :through => "characters", :source => "movie"})
+  
   # this only works because we defined characters on the step before
 
-  def filmography
-    the_many = Array.new
+  # the abbreviated code is the same as the code below:
 
-    self.characters.each do |joining_record|
-      destination_record = joining_record.movie
+  #def filmography
+   # the_many = Array.new
 
-      the_many.push(destination_record)
-    end
+    #self.characters.each do |joining_record|
+     # destination_record = joining_record.movie
 
-    return the_many
-  end
+      #the_many.push(destination_record)
+    #end
+
+    #return the_many
+  #end
 
 end
